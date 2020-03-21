@@ -147,11 +147,30 @@ public class CreditCardDAOImpl implements CreditCardDAO
             }
         }
     }
+    
+    final static String deleteSQL = "delete from creditcard where player_id = ?;";
 
     @Override
     public int delete(Connection connection, Long ccID) throws SQLException, DAOException
     {
-        return 0;
+        if (ccID == null) {
+            throw new DAOException("Trying to delete Credit Card with NULL ID");
+        }
+
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(deleteSQL);
+            ps.setLong(1, ccID);
+
+            int rows = ps.executeUpdate();
+            return rows;
+        }
+        finally {
+            if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
+
     }
 
     @Override
